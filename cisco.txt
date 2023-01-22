@@ -1,0 +1,109 @@
+hostnamebi davarqvat saxelebi                                   
+VLAN50 - 10.0.0.0/10
+VLAN60 - 10.0.0.64/10
+VLAN70 - 10.0.0.128/10
+VLAN80 - 10.0.0.192/10
+
+
+parolebi 1.line console 0         password class      login   service password encryption
+
+ssh wvdoma:
+enable
+conf t
+hostname R1
+ip domain-name nika.com
+crypto key generate rsa 
+1024
+username admin   secret cisco
+aaa new-model
+line vty 0 15
+transport input ssh
+do sh run
+write
+
+
+
+vlanebis sheqmna
+S1  SWITCHEBZE
+Enable   conf t         vlan 50  name IT exit
+Vlan 60    name HR  exit
+Interface fastethernet 0/1            switchport mode accsess           switchport accsess vlan 50   exit
+Interface fasteth          0/2         switchport mode accsess switchport accsess vlan 60
+interface gigabitethernet 0/1 switchport mode trunk exit
+
+S2 SWITCHZE
+Enable   conf t         vlan 50  name IT exit
+Vlan 60    name HR  exit
+Interface fastethernet 0/1            switchport mode accsess           switchport accsess vlan 50   exit
+Interface fasteth          0/2         switchport mode accsess switchport accsess vlan 60
+Interface gigabitethernet 0/2 switchport mode trunk   exit
+
+ZEDA SWITHCZE
+Conf t vlan 50 name IT 
+Vlan 60 name HR
+Interface gigabit 0/1      switchport mode trunk  exit
+Interface gigabit 0/2          switchport mode trunk    exit
+Interface fastethr    0/24         switchport mode trunk
+
+sabinterfeicis sheqmna pirvel routerze
+conf t   interface gigabit 0/0.50    encapsulation dot  50     ip adress 10.0.0.1  255.192.0.0 exit
+interface gigabit 0/0.60          encapsulation dot 60         ip adress 10.64.0.1  255.192.0.0 exit
+interface gigabit 0/0  no shutdown exit end write
+
+meore routerze
+conf t   interface gigabit 0/0.70    encapsulation dot  70     ip adress 10.128.0.1  255.192.0.0 exit
+interface gigabit 0/0.80          encapsulation dot 80         ip adress 10.192.0.1  255.192.0.0 exit
+interface gigabit 0/0  no shutdown exit end write
+
+serveris ip adresia 10.192.0.2 default gateway 10.192.0.1  subnet maski 255.192.0.0
+DNS servershi  adressia 10.192.0.2   cisco.com da davayenot on ze
+
+
+DHCP SERVISI router 1
+pirveli routerze
+conf t     
+ip dhcp pool lan1
+network 10.0.0.0 255.192.0.0
+default-route 10.0.0.1 gateway aris es
+exit
+ip dhcp pool lan2
+network 10.64.0.0 255.192.0.0
+default route 10.64.0.1
+
+ DHCP SERVISI router 2
+conf t
+ip dhcp pool SALES
+network 10.128.0.0 255.192.0.0
+default route 10.128.0.1
+exit
+ip dhcp pool SALES
+network 10.128.0.0 255.192.0.0
+default route 10.128.0.1
+dns-server 10.192.0.150
+exit
+ip dhcp pool LAW
+network 10.192.0.0 255.192.0.0
+default router 10.192.0.1
+dns-server 10.192.0.150
+exit
+write
+
+
+
+
+
+RIP is gawera
+conf t   
+router rip
+version 2
+no auto-summary
+network 10.0.0.0
+network 10.64.0.0
+network 192.168.10.0
+default-information originate
+passove-interface gigabitethernet 0/0
+passive-interface gigabitethernet 0/1
+passive-interface gigabitethernet 0/2
+passive-interface fastethernet 0/24
+exit
+
